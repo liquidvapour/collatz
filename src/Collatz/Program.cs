@@ -8,31 +8,38 @@ namespace Collatz
     {
         static void Main(string[] args)
         {
-            foreach (var i in System.Linq.Enumerable.Range(1, 100)) 
+            var max = 0;
+            foreach (var i in System.Linq.Enumerable.Range(1, 10000)) 
             {
-                var (c, a) = HotpoInternal(i);
-                Console.WriteLine($"{i} has {c} steps");
-                Console.WriteLine(ShowPath(a.Reverse()));
+                var (steps, path) = HotpoAcc(i);
+                Console.WriteLine($"{i} has {steps} steps");
+                Console.WriteLine(ShowPath(path));
+                max = Math.Max(max, steps);
             }
+            Console.WriteLine($"Max steps: {max}");
         }
 
         private static string ShowPath(IEnumerable<int> a) => string.Join(" -> ", a);
 
         public static int Hotpo(int v)
         {
-            var (count, ac) = HotpoInternal(v);
+            var (count, _) = HotpoInternal(v, 0, ImmutableList<int>.Empty);
             return count;
         }
+        public static (int, ImmutableList<int>) HotpoAcc(int v)
+        {
+            return HotpoInternal(v, 0, ImmutableList<int>.Empty.Add(v));
+        }
 
-        public static (int, ImmutableList<int>) HotpoInternal(int v)
+        public static (int, ImmutableList<int>) HotpoInternal(int v, int count, ImmutableList<int> accume)
         {
             if (v == 1)
             {
-                return (0, ImmutableList<int>.Empty.Add(1));
+                return (count, accume);
             }
 
-            var (c, a) =  HotpoInternal(Next(v));
-            return (c+1, a.Add(v));
+            int next = Next(v);
+            return HotpoInternal(next, count+1, accume.Add(next));
         }
 
         private static int Next(int v)
