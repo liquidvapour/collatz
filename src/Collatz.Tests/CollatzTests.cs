@@ -5,22 +5,14 @@ namespace Collatz.Tests
 {
     public class CollatzTests
     {
-        [SetUp]
-        public void Setup()
-        {
-            
-        }
 
-        [Test]
-        public void OneWillReturnOne()
+        [TestCase(1, 0)]
+        [TestCase(5, 5)]
+        [TestCase(6, 8)]
+        [TestCase(23, 15)]
+        public void XWillReturnsY(int x, int y)
         {
-            Program.Hotop(1).Should().Be(0);
-        }
-
-        [Test]
-        public void FiveWillReturnFive()
-        {
-            Program.Hotop(5).Should().Be(5);
+            Program.Hotpo(x).Should().Be(y);
         }
     }
 }
