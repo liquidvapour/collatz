@@ -14,7 +14,7 @@ namespace Collatz.Tests
         [Test]
         public void OneWillReturnOne()
         {
-            Program.Hotop(1).Should().Be(1);
+            Program.Hotop(1).Should().Be(0);
         }
 
         [Test]
