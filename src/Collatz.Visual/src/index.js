@@ -6,6 +6,8 @@ import { createCamera, updateCamera} from "./camera";
 import * as vector2d from "./vector2d";
 import { platType } from "./gameLogic/platform";
 import * as startScreen from "./startScreen";
+import * as collatzTree from "./rendering/collatzTree";
+
 
 const vecToString = s => `x: ${s.x.toFixed(2)}, y: ${s.y.toFixed(2)}`;
 
@@ -26,9 +28,12 @@ const drawStats = (ctx, s) => {
 }; 
 
 const startUp = (doc) => {
-    const canvas = doc.getElementById("canvas");
     let player = createPlayer();
+    const collatz = collatzTree.create();
+
+    const canvas = doc.getElementById("canvas");
     const imagesDiv = doc.getElementById("images");
+
 
     const images = {};
 
@@ -46,7 +51,7 @@ const startUp = (doc) => {
     const context = {
         player,
         camera,
-        platforms: createPlatforms(),
+        collatz,
         keyState
     }
 
@@ -64,46 +69,6 @@ const startUp = (doc) => {
 const platSpacing = 450;
 const platWidth = 60;
 
-const randomBetween = (min, max) => (Math.random() * (max - min)) + min;
-
-const createPlatBottom = (x, offset) => ({
-    tl: {x: x * platSpacing, y: 50 + offset },
-    br: {x: x * platSpacing + platWidth, y: 1000},
-    type: platType.hard
-});
-
-const createPlatTop = (x, offset) => ({
-    tl: {x: x * platSpacing, y: -1000 },
-    br: {x: x * platSpacing + platWidth, y: -180 + offset },
-    type: platType.hard
-});
-
-const createGapPlat = (topPlat, bottomPlat) => ({
-    tl: { x: topPlat.tl.x, y: topPlat.br.y },
-    br: { x: bottomPlat.br.x, y: bottomPlat.tl.y },
-    type: platType.gap
-});
-
-const createEndPlat = (x) => ({
-    tl: { x: x * platSpacing, y: -1000 },
-    br: { x: x * platSpacing + platWidth, y: 1000 },
-    type: platType.end
-});
-
-const createPlatforms = () => {
-    const matPlats = 10;
-    const platforms = [];
-    for (let i = 0; i < matPlats; i++) {
-        const offset = randomBetween(0, 250);
-        const bottomPlat = createPlatBottom(i, offset);
-        const topPlat = createPlatTop(i, offset);
-        platforms.push(topPlat);
-        platforms.push(bottomPlat);
-        platforms.push(createGapPlat(topPlat, bottomPlat));
-    }
-    platforms.push(createEndPlat(matPlats + 1));
-    return platforms;
-};
 
 let lastFrameTime = 0;
 
@@ -133,10 +98,10 @@ const drawGame = (canvas, gameState, images) => {
     gc.save();
     gc.fillStyle = "#5B5B5B";
     gc.fillRect(0, 0, canvas.width, canvas.height);
-    drawBackground(gc, images, canvas);
-    gc.translate(gameState.camera.x, gameState.camera.y);
-    drawPlatforms(gc, gameState.platforms);
-    drawPlayer(gc, gameState.player, images);
+    //drawBackground(gc, images, canvas);
+    //gc.translate(gameState.camera.x, gameState.camera.y);
+    collatzTree.draw(gc, gameState.collatz);
+    //drawPlayer(gc, gameState.player, images);
     gc.restore();
     drawStats(gc, gameState);
     
