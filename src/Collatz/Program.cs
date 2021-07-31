@@ -26,6 +26,7 @@ namespace Collatz
             var (count, _) = HotpoInternal(v, 0, ImmutableList<int>.Empty);
             return count;
         }
+
         public static (int, ImmutableList<int>) HotpoAcc(int v)
         {
             return HotpoInternal(v, 0, ImmutableList<int>.Empty.Add(v));
@@ -42,18 +43,10 @@ namespace Collatz
             return HotpoInternal(next, count+1, accume.Add(next));
         }
 
-        private static int Next(int v)
-        {
-            if (v % 2 == 0)
-            {
-                v = v / 2;
-            }
-            else
-            {
-                v = (3 * v) + 1;
-            }
+        private static int Next(int n) => 
+            (n % 2 == 0)
+                ? n / 2
+                : (3 * n) + 1;
 
-            return v;
-        }
     }
 }
