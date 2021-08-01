@@ -29,18 +29,18 @@ const hotpoInternal = (n, accume = [n]) => {
     /*eslint-enable no-constant-condition*/
 }
 
-const branchColor = {};
+const branchColorCache = {};
 
 const getBranchColor = (n) => {
-    if (!branchColor[n]) {
-        branchColor[n] = randomColor();
-        const colorKeys = Object.keys(branchColor);
+    if (!branchColorCache[n]) {
+        branchColorCache[n] = randomColor();
+        const colorKeys = Object.keys(branchColorCache);
         if (colorKeys.length > totalBranches) {
-            delete branchColor[colorKeys[0]];
+            delete branchColorCache[colorKeys[0]];
         }
     }
 
-    return branchColor[n];
+    return branchColorCache[n];
 };
 
 function* genBranches(start, count) {
