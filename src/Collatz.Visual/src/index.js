@@ -21,12 +21,13 @@ const drawStats = (ctx, s) => {
     ctx.fillStyle = "#ffffff";
     ctx.font = '20px sans-serif';
     ctx.fillText(getMovementStats(s), 0, 40);
-    ctx.fillText(curScore, 0, 80);
+    ctx.fillText(s.collatz.n, 0, 80);
     ctx.fillText(`frame: ${s.player.frame}`, 0,  120);
     ctx.restore();
 }; 
 
 const startUp = (doc) => {
+
     let player = createPlayer();
     const collatz = collatzTree.create();
 
@@ -88,14 +89,14 @@ const inGameUpdate = (t, gameState, canvas) => {
     return "game";
 };
 
-const drawGame = (canvas, gameState) => {
+const drawGame = (canvas, gameState, t) => {
     const gc = canvas.getContext("2d", { alpha: false });
     gc.save();
     gc.fillStyle = "#5B5B5B";
     gc.fillRect(0, 0, canvas.width, canvas.height);
     //drawBackground(gc, images, canvas);
     //gc.translate(gameState.camera.x, gameState.camera.y);
-    collatzTree.draw(gc, gameState.collatz);
+    collatzTree.draw(gc, gameState.collatz, t);
     //drawPlayer(gc, gameState.player, images);
     gc.restore();
     drawStats(gc, gameState);
@@ -109,7 +110,7 @@ const draw = (canvas, images, gameState, requestFrame) => {
     {
         case "game":
             curState = inGameUpdate(t, gameState, canvas);
-            drawGame(canvas, gameState, images);
+            drawGame(canvas, gameState, t);
             break;
         default:
             curState = startScreen.updateStart(t, gameState);
@@ -119,12 +120,8 @@ const draw = (canvas, images, gameState, requestFrame) => {
     requestFrame();
 };
 
-let curScore = 0;
 
-const score = (state) => {
-    if (state === playerLogic.scoreType.pass) {
-        curScore += 100;
-    }
+const score = () => {
 };
 
 startUp(document);

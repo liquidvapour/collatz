@@ -1,4 +1,4 @@
-import { randomBetween } from "../math"; 
+import { randomColor, degToRad } from "../math"; 
 
 const thinkTimeMs = 25;
 const branchWidth = 5;
@@ -6,6 +6,8 @@ const branchHeight = 2;
 const totalBranches = 25;
 const rotateAmount=5;
 const straightenFactor = 1.55;
+
+let currentN = 2000000;
 
 const next = (n) => 
     (n % 2 == 0)
@@ -55,9 +57,6 @@ const drawRect = (ctx, w, h) => {
     ctx.restore();
 };
 
-const randomColor = () => `rgb(${randomBetween(0, 255)},${randomBetween(0, 255)},${randomBetween(0, 255)})`;
-
-const degToRad = (deg) => deg * Math.PI / 180;
 const drawBranch = (ctx, branch) => {
     console.log(branch);
     ctx.save();
@@ -89,7 +88,6 @@ const drawBranch = (ctx, branch) => {
     ctx.restore();
 };
 
-let currentN = 2000000;
 
 const think = (collatz) => {
     const newCollatz = create(currentN, totalBranches);
