@@ -1,19 +1,16 @@
 import { randomBetween } from "../math"; 
 
-const thinkTimeMs = 100;
-const branchWidth = 2;
-const branchHeight = 5;
-const totalBranches = 1;
+const thinkTimeMs = 250;
+const branchWidth = 5;
+const branchHeight = 10;
+const totalBranches = 10;
 
 const next = (n) => 
     (n % 2 == 0)
         ? n / 2
         : (3 * n) + 1;
 
-const hotpoInternal = (v, count, accume) => {
-    if (!accume) {
-        accume = [v];
-    }
+const hotpoInternal = (v, count, accume = [v]) => {
 
     if (v === 1)
     {
@@ -25,17 +22,27 @@ const hotpoInternal = (v, count, accume) => {
     return hotpoInternal(nextNumber, count+1, accume);
 }
 
+const branchColor = {};
+
+const getBranchColor = (n) => {
+    if (!branchColor[n]) {
+        branchColor[n] = randomColor();
+    }
+
+    return branchColor[n];
+};
+
 function* genBranches(start, count) {
     for (let i = start; i < start + count; i++) {
         yield ({ 
             parts: hotpoInternal(i, 0),
-            color: randomColor()
+            color: getBranchColor(i)
         });
     }
 }
 
 export const create = (n = 1, numBranches) => ({
-    tree: [...genBranches(n * numBranches, numBranches)]
+    tree: [...genBranches(n, numBranches)]
 });
 
 const drawRect = (ctx, w, h) => {
@@ -54,18 +61,17 @@ const drawBranch = (ctx, branch) => {
     ctx.fillStyle = branch.color;
     ctx.translate(ctx.canvas.width/2, ctx.canvas.height);
     const revBranch = [...branch.parts];
-    //revBranch.reverse();
+
     let last = 1;
     for (let i = 0; i < revBranch.length; i++) {
         const current = revBranch[i];
         const diff = last - current;
+        console.log(`diff: ${diff}`);
         let x = 0;
         if (diff > 0) {
             x = -branchWidth; 
-            //ctx.rotate(degToRad(315));
         } else if (diff < 0) {
             x = branchWidth;
-            //ctx.rotate(degToRad(225));
         }
         ctx.translate(x, 0);
         drawRect(ctx, branchWidth, -(branchHeight));
