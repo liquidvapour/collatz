@@ -1,3 +1,10 @@
+import { randomBetween } from "../math"; 
+
+const thinkTimeMs = 100;
+const branchWidth = 2;
+const branchHeight = 5;
+const totalBranches = 1;
+
 const next = (n) => 
     (n % 2 == 0)
         ? n / 2
@@ -20,12 +27,15 @@ const hotpoInternal = (v, count, accume) => {
 
 function* genBranches(start, count) {
     for (let i = start; i < start + count; i++) {
-        yield hotpoInternal(i, 0);
+        yield ({ 
+            parts: hotpoInternal(i, 0),
+            color: randomColor()
+        });
     }
-};
+}
 
-export const create = (n = 1) => ({
-    tree: [...genBranches(n, 1)]
+export const create = (n = 1, numBranches) => ({
+    tree: [...genBranches(n * numBranches, numBranches)]
 });
 
 const drawRect = (ctx, w, h) => {
@@ -35,14 +45,15 @@ const drawRect = (ctx, w, h) => {
     ctx.restore();
 };
 
-//const degToRad = (deg) => deg * Math.PI / 180;
+const randomColor = () => `rgb(${randomBetween(0, 255)},${randomBetween(0, 255)},${randomBetween(0, 255)})`;
 
+//const degToRad = (deg) => deg * Math.PI / 180;
 const drawBranch = (ctx, branch) => {
     console.log(branch);
     ctx.save();
-    ctx.fillStyle = "#F48C25";
+    ctx.fillStyle = branch.color;
     ctx.translate(ctx.canvas.width/2, ctx.canvas.height);
-    const revBranch = [...branch];
+    const revBranch = [...branch.parts];
     revBranch.reverse();
     let last = 1;
     for (let i = 0; i < revBranch.length; i++) {
@@ -50,15 +61,15 @@ const drawBranch = (ctx, branch) => {
         const diff = last - current;
         let x = 0;
         if (diff > 0) {
-            x = 5; 
+            x = branchWidth; 
             //ctx.rotate(degToRad(315));
         } else if (diff < 0) {
-            x = -5;
+            x = -branchWidth;
             //ctx.rotate(degToRad(225));
         }
         ctx.translate(x, 0);
-        drawRect(ctx, 5, -10);
-        ctx.translate(0, -10);
+        drawRect(ctx, branchWidth, -branchHeight);
+        ctx.translate(0, -branchHeight);
         last = current;
     }
     ctx.restore();
@@ -67,12 +78,11 @@ const drawBranch = (ctx, branch) => {
 let currentN = 1;
 
 const think = (collatz) => {
-    collatz.tree = create(currentN).tree;
+    collatz.tree = create(currentN, totalBranches).tree;
     currentN += 1;
 }; 
 
 let nextThink = 0;
-const thinkTimeMs = 100;
 
 export const draw = (ctx, collatz, t) => {
     if (t.time > nextThink) {
