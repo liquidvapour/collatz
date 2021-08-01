@@ -112,4 +112,5 @@ export const draw = (ctx, collatz, t) => {
         totalPoints += drawBranch(ctx, collatz.tree[i]);
     }
     collatz.points = totalPoints;
+    collatz.rotateAmount = rotateAmount;
 };

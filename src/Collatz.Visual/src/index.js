@@ -23,6 +23,7 @@ const drawStats = (ctx, s) => {
     ctx.fillText(getMovementStats(s), 0, 40);
     ctx.fillText(s.collatz.n, 0, 80);
     ctx.fillText(`ponts: ${s.collatz.points}`, 0,  120);
+    ctx.fillText(`angle: ${s.collatz.rotateAmount.toFixed(2)}`, 0,  160);
     ctx.restore();
 }; 
 
