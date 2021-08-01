@@ -1,10 +1,9 @@
 import { startKeyboard } from "./keyboard";
 import * as playerLogic from "./gameLogic/player";
-import { drawPlayer, createPlayer } from "./rendering/player";
-import { drawPlatforms, drawBackground, updateBackground } from "./rendering/platform";
+import { createPlayer } from "./rendering/player";
+import { updateBackground } from "./rendering/platform";
 import { createCamera, updateCamera} from "./camera";
 import * as vector2d from "./vector2d";
-import { platType } from "./gameLogic/platform";
 import * as startScreen from "./startScreen";
 import * as collatzTree from "./rendering/collatzTree";
 
@@ -66,10 +65,6 @@ const startUp = (doc) => {
     }
 };
 
-const platSpacing = 450;
-const platWidth = 60;
-
-
 let lastFrameTime = 0;
 
 const getTime = () => {
@@ -93,7 +88,7 @@ const inGameUpdate = (t, gameState, canvas) => {
     return "game";
 };
 
-const drawGame = (canvas, gameState, images) => {
+const drawGame = (canvas, gameState) => {
     const gc = canvas.getContext("2d", { alpha: false });
     gc.save();
     gc.fillStyle = "#5B5B5B";
