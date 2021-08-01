@@ -1,13 +1,13 @@
 import { randomColor, degToRad } from "../math";
 
-const thinkTimeMs = 25;
+const thinkTimeMs = 250;
 const branchWidth = 5;
-const branchHeight = 2;
+const branchHeight = 20;
 const totalBranches = 25;
-const rotateAmount = 5;
-const straightenFactor = 1.55;
+let rotateAmount = 90;
+const straightenFactor = 1;
 
-let currentN = 2000000;
+let currentN = 1;
 
 const next = (n) =>
     (n % 2 == 0)
@@ -57,42 +57,34 @@ export const create = (n = 1, numBranches) => ({
     n
 });
 
-const drawRect = (ctx, w, h) => {
-    ctx.save()
-    ctx.scale(w, h);
-    ctx.fillRect(0, 0, 1, 1);
-    ctx.restore();
-};
-
 const drawBranch = (ctx, branch) => {
-    console.log(branch);
     ctx.save();
-    ctx.fillStyle = branch.color;
-    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height);
+    ctx.strokeStyle = branch.color;
+    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height/2);
     const revBranch = [...branch.parts];
 
     let last = 1;
+    ctx.beginPath();
+    ctx.lineWidth = branchWidth;
+    let points = 0;
     for (let i = 0; i < revBranch.length; i++) {
         const current = revBranch[i];
         const diff = last - current;
         console.log(`diff: ${diff}`);
-        let x = 0;
-        // if (diff > 0) {
-        //     x = -branchWidth; 
-        // } else if (diff < 0) {
-        //     x = branchWidth;
-        // }
-        ctx.translate(x, 0);
         if (diff > 0) {
             ctx.rotate(degToRad(rotateAmount / straightenFactor));
         } else if (diff < 0) {
             ctx.rotate(degToRad(-rotateAmount));
         }
-        drawRect(ctx, branchWidth, -(branchHeight));
+        //drawRect(ctx, branchWidth, -(branchHeight));
+        ctx.lineTo(0, -branchHeight);
         ctx.translate(0, -(branchHeight));
         last = current;
+        points++;
     }
+    ctx.stroke();
     ctx.restore();
+    return points;
 };
 
 
@@ -106,12 +98,18 @@ const think = (collatz) => {
 let nextThink = 0;
 
 export const draw = (ctx, collatz, t) => {
+    rotateAmount -= 0.005 * t.dt;
+    if (rotateAmount < -90) {
+        rotateAmount = 90;
+    }
     if (t.time > nextThink) {
         think(collatz);
         nextThink = t.time + thinkTimeMs;
     }
 
+    let totalPoints = 0;
     for (let i = 0; i < collatz.tree.length; i++) {
-        drawBranch(ctx, collatz.tree[i]);
+        totalPoints += drawBranch(ctx, collatz.tree[i]);
     }
+    collatz.points = totalPoints;
 };

@@ -22,7 +22,7 @@ const drawStats = (ctx, s) => {
     ctx.font = '20px sans-serif';
     ctx.fillText(getMovementStats(s), 0, 40);
     ctx.fillText(s.collatz.n, 0, 80);
-    ctx.fillText(`frame: ${s.player.frame}`, 0,  120);
+    ctx.fillText(`ponts: ${s.collatz.points}`, 0,  120);
     ctx.restore();
 }; 
 
