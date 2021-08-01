@@ -1,6 +1,6 @@
 export const updateStart = (t, gameState) => {
-    const sinT = Math.sin(t.time / 300);
-    gameState.startBtnY = Math.max(Math.floor((sinT * 128) + 64), 16);
+    const sinT = Math.sin(t.time / 750);
+    gameState.startBtnY = Math.floor((sinT * 80));
     
     
     return gameState.keyState.jumpPressed ? "game" : "start";
