@@ -4,15 +4,16 @@ const next = (n) =>
         : (3 * n) + 1;
 
 const hotpoInternal = (v, count, accume) => {
+    if (!accume) {
+        accume = [v];
+    }
+
     if (v === 1)
     {
         return accume;
     }
 
     const nextNumber = next(v);
-    if (!accume) {
-        accume = [v];
-    }
     accume.push(nextNumber)
     return hotpoInternal(nextNumber, count+1, accume);
 }
@@ -23,8 +24,8 @@ function* genBranches(start, count) {
     }
 };
 
-export const create = () => ({
-    tree: [...genBranches(10, 100)]
+export const create = (n = 1) => ({
+    tree: [...genBranches(n, 1)]
 });
 
 const drawRect = (ctx, w, h) => {
@@ -41,7 +42,6 @@ const drawBranch = (ctx, branch) => {
     ctx.save();
     ctx.fillStyle = "#F48C25";
     ctx.translate(ctx.canvas.width/2, ctx.canvas.height);
-    drawRect(ctx,10, -50);
     const revBranch = [...branch];
     revBranch.reverse();
     let last = 1;
@@ -50,21 +50,36 @@ const drawBranch = (ctx, branch) => {
         const diff = last - current;
         let x = 0;
         if (diff > 0) {
-            x = 20; 
+            x = 5; 
             //ctx.rotate(degToRad(315));
         } else if (diff < 0) {
-            x = -20;
+            x = -5;
             //ctx.rotate(degToRad(225));
         }
         ctx.translate(x, 0);
-        drawRect(ctx, 10, -30);
-        ctx.translate(0, -30);
+        drawRect(ctx, 5, -10);
+        ctx.translate(0, -10);
         last = current;
     }
     ctx.restore();
 };
 
-export const draw = (ctx, collatz) => {
+let currentN = 1;
+
+const think = (collatz) => {
+    collatz.tree = create(currentN).tree;
+    currentN += 1;
+}; 
+
+let nextThink = 0;
+const thinkTimeMs = 100;
+
+export const draw = (ctx, collatz, t) => {
+    if (t.time > nextThink) {
+        think(collatz);
+        nextThink = t.time + thinkTimeMs;
+    }
+
     for (let i = 0; i < collatz.tree.length; i++) {
         drawBranch(ctx, collatz.tree[i]);
     }
