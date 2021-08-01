@@ -54,22 +54,22 @@ const drawBranch = (ctx, branch) => {
     ctx.fillStyle = branch.color;
     ctx.translate(ctx.canvas.width/2, ctx.canvas.height);
     const revBranch = [...branch.parts];
-    revBranch.reverse();
+    //revBranch.reverse();
     let last = 1;
     for (let i = 0; i < revBranch.length; i++) {
         const current = revBranch[i];
         const diff = last - current;
         let x = 0;
         if (diff > 0) {
-            x = branchWidth; 
+            x = -branchWidth; 
             //ctx.rotate(degToRad(315));
         } else if (diff < 0) {
-            x = -branchWidth;
+            x = branchWidth;
             //ctx.rotate(degToRad(225));
         }
         ctx.translate(x, 0);
-        drawRect(ctx, branchWidth, -branchHeight);
-        ctx.translate(0, -branchHeight);
+        drawRect(ctx, branchWidth, -(branchHeight));
+        ctx.translate(0, -(branchHeight));
         last = current;
     }
     ctx.restore();
