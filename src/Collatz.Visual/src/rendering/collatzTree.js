@@ -1,9 +1,11 @@
 import { randomBetween } from "../math"; 
 
-const thinkTimeMs = 250;
+const thinkTimeMs = 25;
 const branchWidth = 5;
-const branchHeight = 10;
-const totalBranches = 10;
+const branchHeight = 2;
+const totalBranches = 25;
+const rotateAmount=5;
+const straightenFactor = 1.55;
 
 const next = (n) => 
     (n % 2 == 0)
@@ -42,7 +44,8 @@ function* genBranches(start, count) {
 }
 
 export const create = (n = 1, numBranches) => ({
-    tree: [...genBranches(n, numBranches)]
+    tree: [...genBranches(n, numBranches)],
+    n
 });
 
 const drawRect = (ctx, w, h) => {
@@ -54,7 +57,7 @@ const drawRect = (ctx, w, h) => {
 
 const randomColor = () => `rgb(${randomBetween(0, 255)},${randomBetween(0, 255)},${randomBetween(0, 255)})`;
 
-//const degToRad = (deg) => deg * Math.PI / 180;
+const degToRad = (deg) => deg * Math.PI / 180;
 const drawBranch = (ctx, branch) => {
     console.log(branch);
     ctx.save();
@@ -68,12 +71,17 @@ const drawBranch = (ctx, branch) => {
         const diff = last - current;
         console.log(`diff: ${diff}`);
         let x = 0;
-        if (diff > 0) {
-            x = -branchWidth; 
-        } else if (diff < 0) {
-            x = branchWidth;
-        }
+        // if (diff > 0) {
+        //     x = -branchWidth; 
+        // } else if (diff < 0) {
+        //     x = branchWidth;
+        // }
         ctx.translate(x, 0);
+        if (diff > 0) {
+            ctx.rotate(degToRad(rotateAmount/straightenFactor));
+        } else if (diff < 0) {
+            ctx.rotate(degToRad(-rotateAmount));
+        }
         drawRect(ctx, branchWidth, -(branchHeight));
         ctx.translate(0, -(branchHeight));
         last = current;
@@ -81,10 +89,12 @@ const drawBranch = (ctx, branch) => {
     ctx.restore();
 };
 
-let currentN = 1;
+let currentN = 2000000;
 
 const think = (collatz) => {
-    collatz.tree = create(currentN, totalBranches).tree;
+    const newCollatz = create(currentN, totalBranches);
+    collatz.tree = newCollatz.tree;
+    collatz.n = newCollatz.n;
     currentN += 1;
 }; 
 
