@@ -9,7 +9,7 @@ namespace Collatz
         static void Main(string[] args)
         {
             var max = 0;
-            foreach (var i in System.Linq.Enumerable.Range(1, 10000)) 
+            foreach (var i in System.Linq.Enumerable.Range(10, 10)) 
             {
                 var (steps, path) = HotpoAcc(i);
                 Console.WriteLine($"{i} has {steps} steps");

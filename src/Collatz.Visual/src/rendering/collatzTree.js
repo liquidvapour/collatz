@@ -17,8 +17,14 @@ const hotpoInternal = (v, count, accume) => {
     return hotpoInternal(nextNumber, count+1, accume);
 }
 
+function* genBranches(start, count) {
+    for (let i = start; i < start + count; i++) {
+        yield hotpoInternal(i, 0);
+    }
+};
+
 export const create = () => ({
-    tree: hotpoInternal(17, 0)
+    tree: [...genBranches(10, 100)]
 });
 
 const drawRect = (ctx, w, h) => {
@@ -51,14 +57,15 @@ const drawBranch = (ctx, branch) => {
             //ctx.rotate(degToRad(225));
         }
         ctx.translate(x, 0);
-        drawRect(ctx, 10, -50);
-        ctx.translate(0, -50);
+        drawRect(ctx, 10, -30);
+        ctx.translate(0, -30);
         last = current;
     }
     ctx.restore();
-
 };
 
 export const draw = (ctx, collatz) => {
-    drawBranch(ctx, collatz.tree);
+    for (let i = 0; i < collatz.tree.length; i++) {
+        drawBranch(ctx, collatz.tree[i]);
+    }
 };
