@@ -1,29 +1,32 @@
-import { randomColor, degToRad } from "../math"; 
+import { randomColor, degToRad } from "../math";
 
 const thinkTimeMs = 25;
 const branchWidth = 5;
 const branchHeight = 2;
 const totalBranches = 25;
-const rotateAmount=5;
+const rotateAmount = 5;
 const straightenFactor = 1.55;
 
 let currentN = 2000000;
 
-const next = (n) => 
+const next = (n) =>
     (n % 2 == 0)
         ? n / 2
         : (3 * n) + 1;
 
-const hotpoInternal = (v, count, accume = [v]) => {
+const hotpoInternal = (n, accume = [n]) => {
+    /*eslint-disable no-constant-condition*/
+    while (true) {
 
-    if (v === 1)
-    {
-        return accume;
+        if (n === 1) {
+            return accume;
+        }
+
+        const nn = next(n);
+        n = nn;
+        accume.push(nn)
     }
-
-    const nextNumber = next(v);
-    accume.push(nextNumber)
-    return hotpoInternal(nextNumber, count+1, accume);
+    /*eslint-enable no-constant-condition*/
 }
 
 const branchColor = {};
@@ -31,6 +34,10 @@ const branchColor = {};
 const getBranchColor = (n) => {
     if (!branchColor[n]) {
         branchColor[n] = randomColor();
+        const colorKeys = Object.keys(branchColor);
+        if (colorKeys.length > totalBranches) {
+            delete branchColor[colorKeys[0]];
+        }
     }
 
     return branchColor[n];
@@ -38,8 +45,8 @@ const getBranchColor = (n) => {
 
 function* genBranches(start, count) {
     for (let i = start; i < start + count; i++) {
-        yield ({ 
-            parts: hotpoInternal(i, 0),
+        yield ({
+            parts: hotpoInternal(i),
             color: getBranchColor(i)
         });
     }
@@ -51,7 +58,7 @@ export const create = (n = 1, numBranches) => ({
 });
 
 const drawRect = (ctx, w, h) => {
-    ctx.save()   
+    ctx.save()
     ctx.scale(w, h);
     ctx.fillRect(0, 0, 1, 1);
     ctx.restore();
@@ -61,7 +68,7 @@ const drawBranch = (ctx, branch) => {
     console.log(branch);
     ctx.save();
     ctx.fillStyle = branch.color;
-    ctx.translate(ctx.canvas.width/2, ctx.canvas.height);
+    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height);
     const revBranch = [...branch.parts];
 
     let last = 1;
@@ -77,7 +84,7 @@ const drawBranch = (ctx, branch) => {
         // }
         ctx.translate(x, 0);
         if (diff > 0) {
-            ctx.rotate(degToRad(rotateAmount/straightenFactor));
+            ctx.rotate(degToRad(rotateAmount / straightenFactor));
         } else if (diff < 0) {
             ctx.rotate(degToRad(-rotateAmount));
         }
@@ -94,7 +101,7 @@ const think = (collatz) => {
     collatz.tree = newCollatz.tree;
     collatz.n = newCollatz.n;
     currentN += 1;
-}; 
+};
 
 let nextThink = 0;
 
